@@ -4,38 +4,40 @@ require("dotenv").config({ quiet: true });
 
 let pool;
 
+const dbConfig = {
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  port: Number(process.env.DB_PORT || 4000),
+    ssl: {
+    minVersion: "TLSv1.2",
+    rejectUnauthorized: true,
+  },
+};
+
 async function connectDB() {
-  // Connect to MySQL server first
-  const connection = await mysql.createConnection({
-    host: process.env.DB_HOST || "localhost",
-    user: process.env.DB_USER || "root",
-    password: process.env.DB_PASSWORD || "",
-    port: Number(process.env.DB_PORT || 3306),
-  });
+  // Connect to TiDB server first
+  const connection = await mysql.createConnection(dbConfig);
 
-   console.log("MySQL connected successfully");
+  console.log("TiDB Cloud connected successfully");
 
-  // Create database if it does not exist
-  
+  const dbName = process.env.DB_NAME;
+
   // Create database if it does not exist
   await connection.query(
-    `CREATE DATABASE IF NOT EXISTS \`${process.env.DB_NAME || "food_order_db"}\``
+    `CREATE DATABASE IF NOT EXISTS \`${dbName}\``
   );
 
   await connection.end();
 
-  // Connect to the application database
+  // Connect to application database
   pool = mysql.createPool({
-    host: process.env.DB_HOST || "localhost",
-    user: process.env.DB_USER || "root",
-    password: process.env.DB_PASSWORD || "",
-    database: process.env.DB_NAME || "food_order_db",
-    port: Number(process.env.DB_PORT || 3306),
+    ...dbConfig,
+    database: dbName,
     waitForConnections: true,
     connectionLimit: 10,
   });
 
-  // Create orders table if it does not exist
   await pool.query(`
     CREATE TABLE IF NOT EXISTS orders (
       id INT AUTO_INCREMENT PRIMARY KEY,
@@ -49,19 +51,18 @@ async function connectDB() {
     )
   `);
 
-  
-await pool.query(`
-  CREATE TABLE IF NOT EXISTS order_items (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    order_id INT NOT NULL,
-    item_name VARCHAR(100) NOT NULL,
-    quantity INT NOT NULL,
-    price DECIMAL(10, 2) NOT NULL,
-    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
-  )
-`);
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS order_items (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      order_id INT NOT NULL,
+      item_name VARCHAR(100) NOT NULL,
+      quantity INT NOT NULL,
+      price DECIMAL(10, 2) NOT NULL,
+      FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
+    )
+  `);
 
-console.log("Order items table is ready");
+  console.log("Orders and order_items tables are ready");
 
   return pool;
 }
