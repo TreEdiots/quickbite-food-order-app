@@ -83,7 +83,7 @@ npm run dev
 The backend will start on:
 
 ```text
-http://localhost:5000
+https://food-order-backend-yvp4.onrender.com
 ```
 
 The app creates the database and tables automatically if they do not already exist.
@@ -168,7 +168,7 @@ npm test
 
 ## Notes
 
-- The frontend calls the backend at `http://localhost:5000`.
+- The frontend calls the backend at `https://food-order-backend-yvp4.onrender.com`.
 - If MySQL is not running or the environment values are incorrect, the backend will fail to initialize.
 - The app automatically creates the `food_order_db` database and the required `orders` and `order_items` tables when started.
 

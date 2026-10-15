@@ -60,7 +60,7 @@ function App() {
       setTrackingLoading(true);
 
       const response = await fetch(
-        `http://localhost:5000/api/orders/${trackOrderId.trim()}`
+        `https://food-order-backend-yvp4.onrender.com/api/orders/${trackOrderId.trim()}`
       );
 
       const data = await response.json();
@@ -130,7 +130,7 @@ function App() {
       setLoading(true);
 
       const response = await fetch(
-        "http://localhost:5000/api/orders",
+        "https://food-order-backend-yvp4.onrender.com/api/orders",
         {
           method: "POST",
           headers: {
@@ -186,7 +186,7 @@ function App() {
     const refreshOrderStatus = async () => {
       try {
         const response = await fetch(
-          `http://localhost:5000/api/orders/${trackedOrder.id}`
+          `https://food-order-backend-yvp4.onrender.com/api/orders/${trackedOrder.id}`
         );
 
         if (!response.ok) return;

@@ -172,7 +172,7 @@ describe("QuickBite Food Order App", () => {
     });
 
     expect(mockFetch).toHaveBeenCalledWith(
-      "http://localhost:5000/api/orders",
+      "https://food-order-backend-yvp4.onrender.com/api/orders",
       expect.objectContaining({
         method: "POST",
         headers: {
